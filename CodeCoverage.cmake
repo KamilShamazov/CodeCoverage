@@ -88,7 +88,6 @@ ENDIF() # NOT CMAKE_COMPILER_IS_GNUCC
 #                       HTML report is generated in _outputname/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
-SET(LCOV_FLAGS --ignore-errors mismatch)
 
 FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
@@ -102,21 +101,20 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
-		
-		# Cleanup lcov
-		${LCOV_PATH} --directory . --zerocounters
-		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned
+    		# Cleanup lcov
+    		COMMAND ${LCOV_PATH} --directory . --zerocounters
+    		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned
 
-		# Run tests
-		COMMAND ${_testrunner} ${ARGV3}
-		
-		# Capturing lcov counters and generating report
-		COMMAND ${LCOV_PATH} ${LCOV_FLAGS} --directory . --capture --output-file ${_outputname}.info
-		COMMAND ${LCOV_PATH} ${LCOV_FLAGS} --remove ${_outputname}.info '*/test/*' '/usr/*' --output-file ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned
-		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info.cleaned
-		
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
+    		# Run tests
+    		COMMAND ${_testrunner} ${ARGV3}
+    
+    		# Capturing lcov counters and generating report
+    		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info --ignore-errors mismatch
+    		COMMAND ${LCOV_PATH} --remove ${_outputname}.info '*/test/*' '/usr/*' '*/external/*' --output-file ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned --ignore-errors mismatch
+    		COMMAND ${GENHTML_PATH} -o ${_outputname} ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned
+    
+   		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
 	)
 	
 	# Show info where to find the report
