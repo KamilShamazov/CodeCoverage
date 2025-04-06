@@ -88,6 +88,8 @@ ENDIF() # NOT CMAKE_COMPILER_IS_GNUCC
 #                       HTML report is generated in _outputname/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
+SET(LCOV_FLAGS --ignore-errors mismatch)
+
 FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
 	IF(NOT LCOV_PATH)
@@ -109,7 +111,6 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 		COMMAND ${_testrunner} ${ARGV3}
 		
 		# Capturing lcov counters and generating report
-    		SET(LCOV_FLAGS --ignore-errors mismatch --quite)
 		COMMAND ${LCOV_PATH} ${LCOV_FLAGS} --directory . --capture --output-file ${_outputname}.info
 		COMMAND ${LCOV_PATH} ${LCOV_FLAGS} --remove ${_outputname}.info '*/test/*' '/usr/*' --output-file ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info.cleaned
