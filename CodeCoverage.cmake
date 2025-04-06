@@ -109,8 +109,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     		COMMAND ${_testrunner} ${ARGV3}
     
     		# Capturing lcov counters and generating report
-    		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info --ignore-errors mismatch
-    		COMMAND ${LCOV_PATH} --remove ${_outputname}.info '*/test/*' '/usr/*' '*/external/*' --output-file ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned --ignore-errors mismatch
+    		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info --ignore-errors mismatch,mismatch
+    		COMMAND ${LCOV_PATH} --remove ${_outputname}.info '*/test/*' '/usr/*' '*/external/*' --output-file ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned --ignore-errors mismatch,mismatch
     		COMMAND ${GENHTML_PATH} -o ${_outputname} ${CMAKE_BINARY_DIR}/${_outputname}.info.cleaned
     
    		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
